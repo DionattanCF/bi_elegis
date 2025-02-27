@@ -63,6 +63,12 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .state-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -103,11 +109,43 @@
         
         <div id="report-view" class="report-container">
             <button class="back-button" onclick="goBack()">Voltar</button>
+            <h2 id="state-title" class="state-title">Relatório</h2>
             <div id="report-frame-container"></div>
         </div>
     </div>
 
     <script>
+        // Mapeamento de códigos de estado para nomes completos
+        const stateNames = {
+            'AC': 'Acre',
+            'AL': 'Alagoas',
+            'AP': 'Amapá',
+            'AM': 'Amazonas',
+            'BA': 'Bahia',
+            'CE': 'Ceará',
+            'DF': 'Distrito Federal',
+            'ES': 'Espírito Santo',
+            'GO': 'Goiás',
+            'MA': 'Maranhão',
+            'MT': 'Mato Grosso',
+            'MS': 'Mato Grosso do Sul',
+            'MG': 'Minas Gerais',
+            'PA': 'Pará',
+            'PB': 'Paraíba',
+            'PR': 'Paraná',
+            'PE': 'Pernambuco',
+            'PI': 'Piauí',
+            'RJ': 'Rio de Janeiro',
+            'RN': 'Rio Grande do Norte',
+            'RS': 'Rio Grande do Sul',
+            'RO': 'Rondônia',
+            'RR': 'Roraima',
+            'SC': 'Santa Catarina',
+            'SP': 'São Paulo',
+            'SE': 'Sergipe',
+            'TO': 'Tocantins'
+        };
+
         // Objeto com os URLs dos relatórios do Power BI para cada estado
         const reportUrls = {
             'GO': 'https://app.powerbi.com/view?r=eyJrIjoiOTM3OGQ5NGItM2FiYi00NGE5LWI3OTktMzRlZDhlYTQ1MzkyIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
@@ -115,27 +153,27 @@
             'AC': 'https://app.powerbi.com/view?r=eyJrIjoiYjVlM2FlODktN2JhOS00MWQwLThiZTItYmU5OWM2NzMxNDBhIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
             'AL': '',
             'AP': '',
-            'AM': 'https://app.powerbi.com/view?r=eyJrIjoiOGI4OTYxYWQtOGIxMC00ODcwLWE3N2YtNDY4ODFiZjJiNTM2IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
-            'BA': '',
+            'AM': 'https://app.powerbi.com/view?r=eyJrIjoiYjVlM2FlODktN2JhOS00MWQwLThiZTItYmU5OWM2NzMxNDBhIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'BA': 'https://app.powerbi.com/view?r=eyJrIjoiZDIzZjgyY2ItODI4MS00MTNkLWIxOGEtMjUwMzE2MDdlMDVhIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
             'CE': '',
             'DF': '',
-            'ES': '',
-            'MA': '',
-            'MT': '',
-            'MS': '',
-            'MG': '',
-            'PA': '',
-            'PB': '',
-            'PR': '',
-            'PE': '',
-            'PI': '',
-            'RJ': '',
-            'RN': '',
-            'RS': '',
-            'RO': '',
-            'RR': '',
-            'SC': '',
-            'SP': '',
+            'ES': 'https://app.powerbi.com/view?r=eyJrIjoiYzk5NjhiN2ItZTQ2ZS00MmVkLTlhMzgtYTc5M2NjNTczODY3IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'MA': 'https://app.powerbi.com/view?r=eyJrIjoiY2Q4MGIwMTYtY2ZkNS00MDBkLTgzMGYtODU4ZDE4YTdiZDAxIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'MT': 'https://app.powerbi.com/view?r=eyJrIjoiMmZhMWUxZTItMjg3Ny00NTMxLWJkNzgtODU2MTA0NDRmNzc5IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'MS': 'https://app.powerbi.com/view?r=eyJrIjoiYjAyMTQzYjgtMzQzNi00YTQwLTk1MWMtY2VmZWM2M2VlOGVjIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'MG': 'https://app.powerbi.com/view?r=eyJrIjoiMzhiODI3YTMtMDQ3Yy00YzFkLWJhMmEtOWQwMmQ5YjY1YTQyIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'PA': 'https://app.powerbi.com/view?r=eyJrIjoiYTI1MDY2MDAtNjI5Yi00NGZjLTlkNzgtMjU3MmQ2OTM0NDk1IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'PB': 'https://app.powerbi.com/view?r=eyJrIjoiYzVjMTcwYmItZjIxOC00YmVhLWI2NDItY2U3NTE2N2U5YzY5IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'PR': 'https://app.powerbi.com/view?r=eyJrIjoiMGE1YjBjY2MtNGY1Yy00MGEyLTkxOGMtZjU0MjA4YThjMjkwIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'PE': 'https://app.powerbi.com/view?r=eyJrIjoiZTY0MThlNTgtMWVjZi00YTJkLWJlMjYtYjVjNDFjNWIzM2E1IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'PI': 'https://app.powerbi.com/view?r=eyJrIjoiN2YwYWExY2MtNTM1Yi00ZjI4LTgxYzctN2M1MTIzZDgxNmIwIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'RJ': 'https://app.powerbi.com/view?r=eyJrIjoiNTJlMDkzYTMtOTk2Ny00N2M4LWE1ZjUtNmUzZGJiZjRhZjE4IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'RN': 'https://app.powerbi.com/view?r=eyJrIjoiYjI0ZWMxOWEtOWNjMC00YjFhLThmOTktMmM0YjY5YjFmMDE5IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'RS': 'https://app.powerbi.com/view?r=eyJrIjoiZmE5ZTQwMjEtYTkwNy00YTViLWI1MTctNDEzYTcyM2E2ZThlIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'RO': 'https://app.powerbi.com/view?r=eyJrIjoiNzlmMmZkZjgtN2I1OC00Y2JmLWE0NmMtNmQwZTM3N2RkNWM5IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'RR': 'https://app.powerbi.com/view?r=eyJrIjoiODIwZjg5NjAtZDIwNi00NzkxLWJhMDYtNjE5OTU5MTZiOTVmIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'SC': 'https://app.powerbi.com/view?r=eyJrIjoiMTZmMTljNzAtNmQxYS00ZWE1LTk5ZGUtYmRmODUxNjNkNzU2IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            'SP': 'https://app.powerbi.com/view?r=eyJrIjoiNzc2ZDdjZDMtZmY3YS00Y2RjLWIxMDQtZGJkNGI5OGNhMGM4IiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
             'SE': '',
             'TO': ''
         };
@@ -148,6 +186,9 @@
                 alert('Relatório não disponível para este estado.');
                 return;
             }
+            
+            // Atualizar o título com o nome do estado
+            document.getElementById('state-title').textContent = `Relatório - ${stateNames[stateCode]}`;
             
             // Criar iframe
             const iframe = document.createElement('iframe');
