@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios resultados eleições por Estado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .state-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .state-button:hover {
+            background-color: #45a049;
+        }
+        .report-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .report-iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+        }
+        .back-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Relatórios por Estado</h1>
+        
+        <div id="states-view">
+            <div class="states-grid">
+                <button class="state-button" onclick="showReport('AC')">Acre</button>
+                <button class="state-button" onclick="showReport('AL')">Alagoas</button>
+                <button class="state-button" onclick="showReport('AP')">Amapá</button>
+                <button class="state-button" onclick="showReport('AM')">Amazonas</button>
+                <button class="state-button" onclick="showReport('BA')">Bahia</button>
+                <button class="state-button" onclick="showReport('CE')">Ceará</button>
+                <button class="state-button" onclick="showReport('DF')">Distrito Federal</button>
+                <button class="state-button" onclick="showReport('ES')">Espírito Santo</button>
+                <button class="state-button" onclick="showReport('GO')">Goiás</button>
+                <button class="state-button" onclick="showReport('MA')">Maranhão</button>
+                <button class="state-button" onclick="showReport('MT')">Mato Grosso</button>
+                <button class="state-button" onclick="showReport('MS')">Mato Grosso do Sul</button>
+                <button class="state-button" onclick="showReport('MG')">Minas Gerais</button>
+                <button class="state-button" onclick="showReport('PA')">Pará</button>
+                <button class="state-button" onclick="showReport('PB')">Paraíba</button>
+                <button class="state-button" onclick="showReport('PR')">Paraná</button>
+                <button class="state-button" onclick="showReport('PE')">Pernambuco</button>
+                <button class="state-button" onclick="showReport('PI')">Piauí</button>
+                <button class="state-button" onclick="showReport('RJ')">Rio de Janeiro</button>
+                <button class="state-button" onclick="showReport('RN')">Rio Grande do Norte</button>
+                <button class="state-button" onclick="showReport('RS')">Rio Grande do Sul</button>
+                <button class="state-button" onclick="showReport('RO')">Rondônia</button>
+                <button class="state-button" onclick="showReport('RR')">Roraima</button>
+                <button class="state-button" onclick="showReport('SC')">Santa Catarina</button>
+                <button class="state-button" onclick="showReport('SP')">São Paulo</button>
+                <button class="state-button" onclick="showReport('SE')">Sergipe</button>
+                <button class="state-button" onclick="showReport('TO')">Tocantins</button>
+            </div>
+        </div>
+        
+        <div id="report-view" class="report-container">
+            <button class="back-button" onclick="goBack()">Voltar</button>
+            <div id="report-frame-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Objeto com os URLs dos relatórios do Power BI para cada estado
+        const reportUrls = {
+            'GO': 'https://app.powerbi.com/view?r=eyJrIjoiOTM3OGQ5NGItM2FiYi00NGE5LWI3OTktMzRlZDhlYTQ1MzkyIiwidCI6IjI3ZWFlMjcwLTY1NTgtNDMzMy1hZjY3LWFlZTE0NmRiMTc4ZiJ9',
+            // Adicione os URLs para os outros estados abaixo
+            'AC': '',
+            'AL': '',
+            'AP': '',
+            'AM': '',
+            'BA': '',
+            'CE': '',
+            'DF': '',
+            'ES': '',
+            'MA': '',
+            'MT': '',
+            'MS': '',
+            'MG': '',
+            'PA': '',
+            'PB': '',
+            'PR': '',
+            'PE': '',
+            'PI': '',
+            'RJ': '',
+            'RN': '',
+            'RS': '',
+            'RO': '',
+            'RR': '',
+            'SC': '',
+            'SP': '',
+            'SE': '',
+            'TO': ''
+        };
+
+        function showReport(stateCode) {
+            const url = reportUrls[stateCode];
+            
+            // Verificar se há URL definida
+            if (!url) {
+                alert('Relatório não disponível para este estado.');
+                return;
+            }
+            
+            // Criar iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.className = 'report-iframe';
+            iframe.title = `Relatório ${stateCode}`;
+            iframe.allowFullscreen = true;
+            
+            // Limpar e adicionar o iframe
+            const container = document.getElementById('report-frame-container');
+            container.innerHTML = '';
+            container.appendChild(iframe);
+            
+            // Mostrar a visualização do relatório e esconder os botões
+            document.getElementById('states-view').style.display = 'none';
+            document.getElementById('report-view').style.display = 'block';
+        }
+
+        function goBack() {
+            // Voltar para a visualização dos estados
+            document.getElementById('report-view').style.display = 'none';
+            document.getElementById('states-view').style.display = 'block';
+            
+            // Limpar o iframe para economizar recursos
+            document.getElementById('report-frame-container').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
